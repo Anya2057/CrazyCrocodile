@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Крокодильчик</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="game">
+  <header class="topbar">
+    <div class="logo"><span>●</span> КРОКОДИЛЬЧИК</div>
+    <div class="counter">ВОПРОС <b id="roundNumber">1</b> / 12</div>
+    <button class="sound" id="soundButton" aria-label="Включить или выключить звук">♪</button>
+  </header>
+
+  <section class="scene" id="stage">
+    <div class="croc-wrap" id="crocWrap">
+      <img class="croc-image open-frame" src="assets/crocodile-open.png" alt="Глянцевый игрушечный крокодил с открытой пастью">
+      <img class="croc-image closed-frame" src="assets/crocodile-closed.png" alt="Крокодил с закрытой пастью">
+      <div class="teeth-layer teeth-disabled" id="teeth"></div>
+      <div class="flash" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <footer class="game-footer">
+    <div class="instruction" id="instruction">Нажми «ВОПРОС», чтобы начать</div>
+    <button class="question-button" id="questionButton">ВОПРОС</button>
+  </footer>
+</main>
+
+<div class="modal" id="questionModal" aria-hidden="true">
+  <div class="card question-card">
+    <div class="question-icon">?</div>
+    <p class="eyebrow">ВОПРОС <span id="modalRound">1</span> / 12</p>
+    <h1 id="questionText">Назови три вещи, которые ты обычно делаешь утром.</h1>
+    <p class="hint">Ответь вслух, затем нажми кнопку.</p>
+    <button id="continueButton">Я ОТВЕТИЛ</button>
+  </div>
+</div>
+
+<div class="modal gameover" id="gameOverModal" aria-hidden="true">
+  <div class="card gameover-card">
+    <p class="eyebrow">ОПАСНЫЙ ЗУБ!</p>
+    <h1>GAME OVER!</h1>
+    <p>Крокодильчик захлопнул пасть</p>
+    <button id="playAgainButton">↻ &nbsp; ИГРАТЬ СНОВА</button>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
