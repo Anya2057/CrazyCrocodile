@@ -32,6 +32,7 @@ const instruction = document.querySelector('#instruction');
 const questionText = document.querySelector('#questionText');
 const roundNumber = document.querySelector('#roundNumber');
 const modalRound = document.querySelector('#modalRound');
+const idleEffects = document.querySelector('#idleEffects');
 
 let dangerous = 0;
 let round = 0;
@@ -135,6 +136,7 @@ function pressTooth(index, tooth) {
 }
 
 function snap() {
+  idleEffects.classList.remove('blinking', 'snorting');
   wrap.classList.add('snap');
   tone(72, 0.14, 'sawtooth');
   setTimeout(() => {
@@ -142,6 +144,40 @@ function snap() {
     tone(48, 0.22, 'square');
   }, 80);
   setTimeout(() => modal(gameOverModal, true), 650);
+}
+
+function idleAnimationAllowed() {
+  return !ended && !document.hidden && !wrap.classList.contains('snap');
+}
+
+function triggerBlink() {
+  if (!idleAnimationAllowed()) return;
+  idleEffects.classList.remove('blinking');
+  void idleEffects.offsetWidth;
+  idleEffects.classList.add('blinking');
+  setTimeout(() => idleEffects.classList.remove('blinking'), 360);
+}
+
+function triggerSnort() {
+  if (!idleAnimationAllowed()) return;
+  idleEffects.classList.remove('snorting');
+  void idleEffects.offsetWidth;
+  idleEffects.classList.add('snorting');
+  setTimeout(() => idleEffects.classList.remove('snorting'), 1000);
+}
+
+function scheduleBlink() {
+  setTimeout(() => {
+    triggerBlink();
+    scheduleBlink();
+  }, 4200 + Math.random() * 4300);
+}
+
+function scheduleSnort() {
+  setTimeout(() => {
+    triggerSnort();
+    scheduleSnort();
+  }, 10500 + Math.random() * 8000);
 }
 
 function tone(freq, duration, type) {
@@ -172,3 +208,5 @@ document.querySelector('#soundButton').addEventListener('click', event => {
 });
 
 newRound();
+scheduleBlink();
+scheduleSnort();
