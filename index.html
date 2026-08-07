@@ -11,8 +11,20 @@
   <header class="topbar">
     <div class="logo"><span>●</span> КРОКОДИЛЬЧИК</div>
     <div class="counter">ВОПРОС <b id="roundNumber">1</b> / 12</div>
-    <button class="sound" id="soundButton" aria-label="Включить или выключить звук">♪</button>
+    <button class="sound" id="audioButton" aria-label="Настройки музыки и звуков" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l5 4V6L7 10H4Z"/><path class="sound-wave" d="M16 9c1.5 1.6 1.5 4.4 0 6M19 6c3.3 3.2 3.3 8.8 0 12"/></svg></button>
   </header>
+
+  <aside class="audio-panel" id="audioPanel" hidden>
+    <div class="audio-head"><div><small>АУДИО</small><strong>Звук игры</strong></div><button id="closeAudio" aria-label="Закрыть настройки">×</button></div>
+    <div class="audio-channel">
+      <div class="channel-title"><span class="channel-icon"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></span><div><b>Музыка</b><small>Фоновый трек</small></div><button class="channel-toggle" id="musicToggle" aria-pressed="true">ВКЛ</button></div>
+      <label for="musicVolume"><span>Громкость</span><output id="musicOutput">55%</output><input id="musicVolume" type="range" min="0" max="100" value="55"></label>
+    </div>
+    <div class="audio-channel">
+      <div class="channel-title"><span class="channel-icon"><svg viewBox="0 0 24 24"><path d="M5 8h3l4-3v14l-4-3H5zM16 9l4 6M20 9l-4 6"/></svg></span><div><b>Звуки</b><small>Зубы и эффекты</small></div><button class="channel-toggle" id="effectsToggle" aria-pressed="true">ВКЛ</button></div>
+      <label for="effectsVolume"><span>Громкость</span><output id="effectsOutput">70%</output><input id="effectsVolume" type="range" min="0" max="100" value="70"></label>
+    </div>
+  </aside>
 
   <section class="scene" id="stage">
     <div class="croc-wrap" id="crocWrap">
@@ -53,6 +65,7 @@
     <button id="playAgainButton">↻ &nbsp; ИГРАТЬ СНОВА</button>
   </div>
 </div>
+<audio id="backgroundMusic" src="audio/background-music.mp3" loop preload="auto"></audio>
 <script src="app.js"></script>
 </body>
 </html>

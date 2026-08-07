@@ -33,12 +33,22 @@ const questionText = document.querySelector('#questionText');
 const roundNumber = document.querySelector('#roundNumber');
 const modalRound = document.querySelector('#modalRound');
 const idleEffects = document.querySelector('#idleEffects');
+const backgroundMusic = document.querySelector('#backgroundMusic');
+const audioButton = document.querySelector('#audioButton');
+const audioPanel = document.querySelector('#audioPanel');
+const musicToggle = document.querySelector('#musicToggle');
+const effectsToggle = document.querySelector('#effectsToggle');
+const musicVolume = document.querySelector('#musicVolume');
+const effectsVolume = document.querySelector('#effectsVolume');
 
 let dangerous = 0;
 let round = 0;
 let canChoose = false;
 let ended = false;
-let audioOn = true;
+let musicOn = localStorage.getItem('crocMusicOn') !== 'false';
+let effectsOn = localStorage.getItem('crocEffectsOn') !== 'false';
+let musicLevel = Number(localStorage.getItem('crocMusicVolume') ?? 55) / 100;
+let effectsLevel = Number(localStorage.getItem('crocEffectsVolume') ?? 70) / 100;
 
 function buildTeeth() {
   teethRoot.replaceChildren();
@@ -181,7 +191,7 @@ function scheduleSnort() {
 }
 
 function tone(freq, duration, type) {
-  if (!audioOn) return;
+  if (!effectsOn || effectsLevel === 0) return;
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return;
   const context = tone.context || (tone.context = new AudioContext());
@@ -189,7 +199,7 @@ function tone(freq, duration, type) {
   const gain = context.createGain();
   oscillator.type = type;
   oscillator.frequency.value = freq;
-  gain.gain.setValueAtTime(0.08, context.currentTime);
+  gain.gain.setValueAtTime(0.08 * effectsLevel, context.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + duration);
   oscillator.connect(gain).connect(context.destination);
   oscillator.start();
@@ -202,10 +212,42 @@ playAgainButton.addEventListener('click', () => {
   modal(gameOverModal, false);
   newRound();
 });
-document.querySelector('#soundButton').addEventListener('click', event => {
-  audioOn = !audioOn;
-  event.currentTarget.textContent = audioOn ? '♪' : '×';
+function syncAudioUI() {
+  backgroundMusic.volume = musicLevel;
+  musicVolume.value = Math.round(musicLevel * 100);
+  effectsVolume.value = Math.round(effectsLevel * 100);
+  document.querySelector('#musicOutput').textContent = `${Math.round(musicLevel * 100)}%`;
+  document.querySelector('#effectsOutput').textContent = `${Math.round(effectsLevel * 100)}%`;
+  musicToggle.textContent = musicOn ? 'ВКЛ' : 'ВЫКЛ';
+  effectsToggle.textContent = effectsOn ? 'ВКЛ' : 'ВЫКЛ';
+  musicToggle.classList.toggle('off', !musicOn);
+  effectsToggle.classList.toggle('off', !effectsOn);
+  musicToggle.setAttribute('aria-pressed', String(musicOn));
+  effectsToggle.setAttribute('aria-pressed', String(effectsOn));
+  audioButton.classList.toggle('muted', !musicOn && !effectsOn);
+  if (musicOn && musicLevel > 0) backgroundMusic.play().catch(() => {});
+  else backgroundMusic.pause();
+}
+
+function beginAudio() {
+  syncAudioUI();
+  document.removeEventListener('pointerdown', beginAudio);
+}
+
+audioButton.addEventListener('click', () => {
+  audioPanel.hidden = !audioPanel.hidden;
+  audioButton.setAttribute('aria-expanded', String(!audioPanel.hidden));
 });
+document.querySelector('#closeAudio').addEventListener('click', () => {
+  audioPanel.hidden = true;
+  audioButton.setAttribute('aria-expanded', 'false');
+});
+musicToggle.addEventListener('click', () => { musicOn = !musicOn; localStorage.setItem('crocMusicOn', musicOn); syncAudioUI(); });
+effectsToggle.addEventListener('click', () => { effectsOn = !effectsOn; localStorage.setItem('crocEffectsOn', effectsOn); syncAudioUI(); });
+musicVolume.addEventListener('input', event => { musicLevel = Number(event.target.value) / 100; localStorage.setItem('crocMusicVolume', event.target.value); syncAudioUI(); });
+effectsVolume.addEventListener('input', event => { effectsLevel = Number(event.target.value) / 100; localStorage.setItem('crocEffectsVolume', event.target.value); syncAudioUI(); });
+document.addEventListener('pointerdown', beginAudio);
+syncAudioUI();
 
 newRound();
 scheduleBlink();
